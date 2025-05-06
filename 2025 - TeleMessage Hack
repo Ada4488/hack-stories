@@ -1,0 +1,30 @@
+🧵 Summary of the TeleMessage Hack
+A hacker exploited a vulnerability in TeleMessage, an Israel-based service owned by Smarsh, which provides modded versions of encrypted messaging apps like Signal, WhatsApp, and Telegram. These versions are used by organizations (including U.S. government officials and major companies) to archive encrypted communications.
+Although sensitive messages from high-profile officials like former National Security Adviser Mike Waltz were not breached, the attacker was able to extract:
+	• Archived message content
+	• Contact information of U.S. government officials
+	• Backend login credentials for TeleMessage systems
+	• Data tied to U.S. Customs and Border Protection, Coinbase, and Scotiabank
+A key revelation: the archived logs from modded Signal clients were not end-to-end encrypted, exposing them to interception and theft.
+Smarsh has suspended TeleMessage services and launched an investigation with an external cybersecurity firm. Coinbase claims no sensitive data was impacted due to their operational model.
+
+🚨 Security Risks & Findings
+Risk Category	Description
+Tampered Clients	TeleMessage used modded encrypted apps, violating trust assumptions and breaking standard E2EE guarantees.
+Broken E2EE	Signal-based apps delivered by TeleMessage were not fully end-to-end encrypted between sender and archive.
+Credential Exposure	Attackers accessed backend login credentials, possibly exposing administrative controls or archive systems.
+Sensitive Metadata Leaks	Contact info and communication logs tied to government and financial entities were exfiltrated.
+Improper Key Management	Archived messages were stored in a way that allowed decryption or plaintext exposure—violating secure cryptographic practices.
+Lack of Certificate Pinning (assumed)	If modded clients removed certificate pinning, it may have enabled MITM attacks or easier interception.
+Risk Amplification via Supply Chain	Trusted institutions adopted insecure tools, exposing critical infrastructure and personnel data.
+
+🔐 Security Advisories & Recommendations
+Area	Advisory
+Do Not Use Modded Apps	Avoid modded versions of encrypted apps—they break E2EE models and may introduce backdoors.
+Verify App Authenticity	Only install apps from trusted sources (e.g., official app stores, verified developers).
+Enforce Certificate Pinning	Ensure certificate pinning is implemented and not bypassed to prevent MITM vulnerabilities.
+Store Archives Securely	Archived encrypted communications must remain encrypted at rest using strong, isolated key management.
+Role-Based Access Controls	Minimize backend access with RBAC, MFA, and privilege separation to reduce insider/credential risk.
+Monitor for Credential Leakage	Rotate and monitor sensitive backend credentials—especially after compromise.
+Conduct Regular Pen Testing	Test the security of all tools introduced into sensitive environments, especially archiving or interception systems.
+Limit Metadata Collection	Especially in tools used by sensitive entities (e.g., government, finance), minimize logging of contacts and message content.
