@@ -8,6 +8,15 @@ Although sensitive messages from high-profile officials like former National Sec
 A key revelation: the archived logs from modded Signal clients were not end-to-end encrypted, exposing them to interception and theft.
 Smarsh has suspended TeleMessage services and launched an investigation with an external cybersecurity firm. Coinbase claims no sensitive data was impacted due to their operational model.
 
+💡 What went wrong:
+- attacker obtained hardcoded credentials from TeleMessage's TM SGNL app by analyzing its source code. 🤦🏿‍♂️
+- Security researcher Micah Lee discovered that the app's code contained embedded usernames and passwords, 
+-> a significant security flaw that facilitated unauthorized access to TeleMessage's backend systems. 
+This vulnerability allowed the hacker to breach the system in approximately 15–20 minutes,
+highlighting the risks associated with embedding sensitive information directly into application code.
+The presence of hardcoded credentials in the app's source code underscores the importance of secure coding practices,
+such as externalizing sensitive information and implementing robust authentication mechanisms, to prevent similar breaches.
+
 🚨 Security Risks & Findings
 Risk Category	Description
 Tampered Clients	TeleMessage used modded encrypted apps, violating trust assumptions and breaking standard E2EE guarantees.
@@ -19,12 +28,17 @@ Lack of Certificate Pinning (assumed)	If modded clients removed certificate pinn
 Risk Amplification via Supply Chain	Trusted institutions adopted insecure tools, exposing critical infrastructure and personnel data.
 
 🔐 Security Advisories & Recommendations
-Area	Advisory
-Do Not Use Modded Apps	Avoid modded versions of encrypted apps—they break E2EE models and may introduce backdoors.
+- Do Not Use Modded Apps	
+Avoid modded versions of encrypted apps—they break E2EE models and may introduce backdoors.
 Verify App Authenticity	Only install apps from trusted sources (e.g., official app stores, verified developers).
-Enforce Certificate Pinning	Ensure certificate pinning is implemented and not bypassed to prevent MITM vulnerabilities.
+- Enforce Certificate Pinning	
+Ensure certificate pinning is implemented and not bypassed to prevent MITM vulnerabilities.
 Store Archives Securely	Archived encrypted communications must remain encrypted at rest using strong, isolated key management.
-Role-Based Access Controls	Minimize backend access with RBAC, MFA, and privilege separation to reduce insider/credential risk.
-Monitor for Credential Leakage	Rotate and monitor sensitive backend credentials—especially after compromise.
-Conduct Regular Pen Testing	Test the security of all tools introduced into sensitive environments, especially archiving or interception systems.
-Limit Metadata Collection	Especially in tools used by sensitive entities (e.g., government, finance), minimize logging of contacts and message content.
+- Role-Based Access Controls	
+Minimize backend access with RBAC, MFA, and privilege separation to reduce insider/credential risk.
+- Monitor for Credential Leakage	
+Rotate and monitor sensitive backend credentials—especially after compromise.
+- Conduct Regular Pen Testing	
+Test the security of all tools introduced into sensitive environments, especially archiving or interception systems.
+-  Limit Metadata Collection	
+Especially in tools used by sensitive entities (e.g., government, finance), minimize logging of contacts and message content.
