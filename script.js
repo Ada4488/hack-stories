@@ -383,8 +383,17 @@ function convertMarkdownToHTML(markdown) {
 function initSmoothScrolling() {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Check if it's an external link (like admin.html)
+            if (href.includes('.html')) {
+                // Let the browser handle the navigation normally
+                return;
+            }
+            
+            // Handle internal navigation with smooth scrolling
             e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
+            const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
@@ -421,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Handle navigation active states on scroll
 window.addEventListener('scroll', function() {
     const sections = ['home', 'about', 'contact'];
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.nav-link:not(.admin-link)');
     
     let current = '';
     sections.forEach(section => {
