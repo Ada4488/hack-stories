@@ -19,6 +19,8 @@ class BlogAdmin {
     // Update session information display
     updateSessionInfo() {
         const loginTime = localStorage.getItem('adminLoginTime');
+        const authMethod = localStorage.getItem('adminAuthMethod');
+        const userData = localStorage.getItem('adminUserData');
         const sessionInfo = document.getElementById('session-info');
         
         if (loginTime) {
@@ -26,11 +28,25 @@ class BlogAdmin {
             const hoursAgo = Math.floor((Date.now() - parseInt(loginTime)) / (1000 * 60 * 60));
             const minutesAgo = Math.floor(((Date.now() - parseInt(loginTime)) % (1000 * 60 * 60)) / (1000 * 60));
             
+            let timeText = '';
             if (hoursAgo > 0) {
-                sessionInfo.textContent = `Session: ${hoursAgo}h ${minutesAgo}m ago`;
+                timeText = `${hoursAgo}h ${minutesAgo}m ago`;
             } else {
-                sessionInfo.textContent = `Session: ${minutesAgo}m ago`;
+                timeText = `${minutesAgo}m ago`;
             }
+            
+            // Add authentication method info
+            let authText = '';
+            if (authMethod === 'gmail' && userData) {
+                const user = JSON.parse(userData);
+                authText = ` via Gmail (${user.email})`;
+            } else if (authMethod === 'passkey') {
+                authText = ' via Passkey';
+            } else {
+                authText = ' via Password';
+            }
+            
+            sessionInfo.textContent = `Session: ${timeText}${authText}`;
         } else {
             sessionInfo.textContent = 'Session: Active';
         }
@@ -692,8 +708,22 @@ document.addEventListener('DOMContentLoaded', () => {
 // Logout function
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
+        // Clear all authentication data
         localStorage.removeItem('adminAuthenticated');
         localStorage.removeItem('adminLoginTime');
+        localStorage.removeItem('adminAuthMethod');
+        localStorage.removeItem('adminUserData');
+        
+        // Clear passkey data if user wants to
+        const authMethod = localStorage.getItem('adminAuthMethod');
+        if (authMethod === 'passkey') {
+            const clearPasskey = confirm('Do you also want to remove your passkey registration?');
+            if (clearPasskey) {
+                localStorage.removeItem('passkeyCredentialId');
+                localStorage.removeItem('passkeyRegistered');
+            }
+        }
+        
         window.location.href = 'login.html';
     }
 }
