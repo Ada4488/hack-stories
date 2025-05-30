@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Hack Stories</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>Hack Stories Admin</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">← Back to Blog</a>
+                <a href="#posts" class="nav-link active">Manage Posts</a>
+                <a href="#new" class="nav-link">New Post</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <div class="container">
+            <!-- Post Management Section -->
+            <section id="posts-section" class="admin-section">
+                <h2 class="section-title">Manage Blog Posts</h2>
+                <div class="posts-list" id="admin-posts-list">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </section>
+
+            <!-- New/Edit Post Section -->
+            <section id="editor-section" class="admin-section" style="display: none;">
+                <h2 class="section-title" id="editor-title">Create New Post</h2>
+                <form id="post-form" class="post-form">
+                    <div class="form-group">
+                        <label for="post-title">Title</label>
+                        <input type="text" id="post-title" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-excerpt">Excerpt</label>
+                        <textarea id="post-excerpt" name="excerpt" rows="3" required placeholder="Brief description of your post..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="post-date">Date</label>
+                            <input type="date" id="post-date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-read-time">Read Time</label>
+                            <input type="text" id="post-read-time" name="readTime" placeholder="5 min read" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-tags">Tags (comma-separated)</label>
+                        <input type="text" id="post-tags" name="tags" placeholder="JavaScript, Tutorial, Security">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-content">Content (Markdown)</label>
+                        <div class="editor-container">
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-action="bold" title="Bold">B</button>
+                                <button type="button" class="toolbar-btn" data-action="italic" title="Italic">I</button>
+                                <button type="button" class="toolbar-btn" data-action="code" title="Code">{ }</button>
+                                <button type="button" class="toolbar-btn" data-action="link" title="Link">🔗</button>
+                                <button type="button" class="toolbar-btn" data-action="preview" title="Preview">👁</button>
+                            </div>
+                            <textarea id="post-content" name="content" rows="20" required placeholder="# Your Post Title
+
+Write your content in Markdown format...
+
+## Code Example
+
+```javascript
+function hello() {
+    console.log('Hello, World!');
+}
+```"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                        <button type="button" id="preview-btn" class="btn btn-outline">Preview</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="save-btn-text">Save Post</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Preview Section -->
+            <section id="preview-section" class="admin-section" style="display: none;">
+                <div class="preview-header">
+                    <h2 class="section-title">Preview</h2>
+                    <button type="button" id="close-preview" class="btn btn-secondary">Close Preview</button>
+                </div>
+                <div class="preview-container">
+                    <article class="article" id="preview-content">
+                        <!-- Preview will be rendered here -->
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Delete Post</h3>
+            <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button type="button" id="cancel-delete" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirm-delete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
