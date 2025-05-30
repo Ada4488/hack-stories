@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Hack Stories</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(200, 136, 91, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+        }
+        
+        .login-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 3rem;
+            width: 100%;
+            max-width: 420px;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .login-title {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            border: 1px solid #fecaca;
+            font-size: 0.875rem;
+            display: none;
+        }
+        
+        .home-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .home-link a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        
+        .home-link a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">Admin Login</h1>
+                <p class="login-subtitle">Enter your credentials to access the admin panel</p>
+            </div>
+            
+            <form class="login-form" id="login-form">
+                <div class="error-message" id="error-message">
+                    Invalid credentials. Please try again.
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="login-btn">
+                    <span id="login-btn-text">Sign In</span>
+                </button>
+            </form>
+            
+            <div class="home-link">
+                <a href="index.html">← Back to Blog</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple authentication system
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'hackstories2025!' // Change this to your preferred password
+        };
+
+        // Check if already logged in
+        if (localStorage.getItem('adminAuthenticated') === 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            const loginBtn = document.getElementById('login-btn');
+            const loginBtnText = document.getElementById('login-btn-text');
+            
+            // Hide previous error
+            errorMessage.style.display = 'none';
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'Signing in...';
+            
+            // Simulate a small delay for better UX
+            setTimeout(() => {
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    // Set authentication flag
+                    localStorage.setItem('adminAuthenticated', 'true');
+                    localStorage.setItem('adminLoginTime', Date.now().toString());
+                    
+                    // Redirect to admin panel
+                    window.location.href = 'admin.html';
+                } else {
+                    // Show error
+                    errorMessage.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtnText.textContent = 'Sign In';
+                    
+                    // Clear form
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            }, 1000);
+        });
+
+        // Clear any existing sessions on page load
+        window.addEventListener('load', function() {
+            // Optional: Clear session if it's older than 24 hours
+            const loginTime = localStorage.getItem('adminLoginTime');
+            if (loginTime) {
+                const hoursSinceLogin = (Date.now() - parseInt(loginTime)) / (1000 * 60 * 60);
+                if (hoursSinceLogin > 24) {
+                    localStorage.removeItem('adminAuthenticated');
+                    localStorage.removeItem('adminLoginTime');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

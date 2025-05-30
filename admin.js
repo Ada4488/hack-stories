@@ -10,9 +10,38 @@ class BlogAdmin {
         this.renderPostsList();
         this.bindEvents();
         this.updateNavigation();
+        this.updateSessionInfo();
         
         // Set today's date as default
         document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Update session information display
+    updateSessionInfo() {
+        const loginTime = localStorage.getItem('adminLoginTime');
+        const sessionInfo = document.getElementById('session-info');
+        
+        if (loginTime) {
+            const loginDate = new Date(parseInt(loginTime));
+            const hoursAgo = Math.floor((Date.now() - parseInt(loginTime)) / (1000 * 60 * 60));
+            const minutesAgo = Math.floor(((Date.now() - parseInt(loginTime)) % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (hoursAgo > 0) {
+                sessionInfo.textContent = `Session: ${hoursAgo}h ${minutesAgo}m ago`;
+            } else {
+                sessionInfo.textContent = `Session: ${minutesAgo}m ago`;
+            }
+        } else {
+            sessionInfo.textContent = 'Session: Active';
+        }
+    }
+
+    // Calculate read time based on content
+    calculateReadTime(content) {
+        const wordsPerMinute = 200; // Average reading speed
+        const words = content.trim().split(/\s+/).length;
+        const minutes = Math.ceil(words / wordsPerMinute);
+        return `${minutes} min read`;
     }
 
     // Load posts from localStorage
@@ -389,13 +418,16 @@ Remember: Security is everyone's responsibility. Start building security into yo
 
     // Save post
     savePost(formData) {
+        const content = formData.get('content');
+        const readTime = formData.get('readTime').trim();
+        
         const postData = {
             title: formData.get('title'),
             excerpt: formData.get('excerpt'),
             date: formData.get('date'),
-            readTime: formData.get('readTime'),
+            readTime: readTime || this.calculateReadTime(content), // Auto-calculate if empty
             tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
-            content: formData.get('content')
+            content: content
         };
 
         if (this.currentEditId) {
@@ -594,6 +626,16 @@ Remember: Security is everyone's responsibility. Start building security into yo
                 this.hideDeleteModal();
             }
         });
+
+        // Auto-calculate read time when content changes
+        document.getElementById('post-content').addEventListener('input', (e) => {
+            const content = e.target.value;
+            const readTimeField = document.getElementById('post-read-time');
+            if (!readTimeField.value.trim()) {
+                const calculatedTime = this.calculateReadTime(content);
+                readTimeField.placeholder = `Auto: ${calculatedTime}`;
+            }
+        });
     }
 
     // Handle toolbar actions
@@ -640,4 +682,18 @@ Remember: Security is everyone's responsibility. Start building security into yo
 let admin;
 document.addEventListener('DOMContentLoaded', () => {
     admin = new BlogAdmin();
+    
+    // Update session info every minute
+    setInterval(() => {
+        admin.updateSessionInfo();
+    }, 60000);
 });
+
+// Logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('adminAuthenticated');
+        localStorage.removeItem('adminLoginTime');
+        window.location.href = 'login.html';
+    }
+}

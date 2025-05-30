@@ -1,11 +1,38 @@
-/* Admin-specific styles */
+/* Admin-specific styles with Retro theme */
 .admin-main {
     padding: 2rem 0;
     min-height: calc(100vh - 4rem);
+    background: var(--bg-primary);
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(200, 136, 91, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
 }
 
 .admin-section {
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    background: var(--bg-primary);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+/* Enhanced retro admin styling */
+.admin-header {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid var(--primary-color);
+    border-radius: var(--radius);
+}
+
+.admin-title {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 /* Posts List */
@@ -16,18 +43,40 @@
 
 .admin-post-card {
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     border-radius: var(--radius);
-    padding: 1.5rem;
+    padding: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.admin-post-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.admin-post-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
 .admin-post-info h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.75rem 0;
     color: var(--text-primary);
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
 }
 
 .admin-post-meta {
@@ -72,6 +121,12 @@
     color: var(--text-primary);
 }
 
+.help-text {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
 .form-group input,
 .form-group textarea {
     width: 100%;
@@ -83,6 +138,11 @@
     background: var(--bg-primary);
     color: var(--text-primary);
     transition: border-color 0.2s;
+}
+
+.form-group input::placeholder {
+    color: var(--text-light);
+    font-style: italic;
 }
 
 .form-group input:focus,
@@ -148,23 +208,29 @@
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: var(--radius);
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--font-sans);
 }
 
 .btn-primary {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
@@ -181,21 +247,26 @@
 .btn-outline {
     background: transparent;
     color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    border: 2px solid var(--primary-color);
 }
 
 .btn-outline:hover {
     background: var(--primary-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-danger {
-    background: #dc2626;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
     color: white;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-danger:hover {
-    background: #b91c1c;
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-small {
@@ -222,10 +293,21 @@
 }
 
 .preview-container {
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     border-radius: var(--radius);
-    padding: 2rem;
     background: var(--bg-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.preview-container h3 {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    margin: 0;
+    padding: 1rem 1.5rem;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    border-radius: var(--radius) var(--radius) 0 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 /* Modal */
@@ -296,10 +378,66 @@
     color: var(--primary-color);
 }
 
-/* Responsive Design */
+/* Logout Button */
+.logout-btn {
+    background: #dc2626 !important;
+    color: white !important;
+    border: 1px solid #dc2626 !important;
+    border-radius: 4px !important;
+    padding: 0.5rem 1rem !important;
+    cursor: pointer !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
+}
+
+.logout-btn:hover {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+
+/* Enhanced session info styling */
+.session-info {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-sm);
+    border: none;
+}
+
+/* Enhanced form styling */
+.form-group label {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+}
+
+/* Better button styling */
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Enhanced navigation hover effects */
+.nav-brand:hover {
+    color: var(--accent-color);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.nav-link:hover {
+    color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+/* Mobile responsiveness for admin */
 @media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
+    .admin-title {
+        font-size: 2rem;
     }
     
     .admin-post-card {
@@ -309,23 +447,10 @@
     
     .admin-post-actions {
         justify-content: flex-start;
+        margin-top: 1rem;
     }
     
     .form-actions {
-        flex-direction: column;
-    }
-    
-    .preview-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-    
-    .modal-content {
-        margin: 1rem;
-    }
-    
-    .modal-actions {
         flex-direction: column;
     }
 }

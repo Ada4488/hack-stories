@@ -7,9 +7,37 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Authentication Protection Script -->
+    <script>
+        // Check authentication before loading admin panel
+        function checkAuthentication() {
+            const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+            const loginTime = localStorage.getItem('adminLoginTime');
+            
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Check if session is older than 24 hours
+            if (loginTime) {
+                const hoursSinceLogin = (Date.now() - parseInt(loginTime)) / (1000 * 60 * 60);
+                if (hoursSinceLogin > 24) {
+                    localStorage.removeItem('adminAuthenticated');
+                    localStorage.removeItem('adminLoginTime');
+                    alert('Your session has expired. Please log in again.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
+        }
+        
+        // Run authentication check immediately
+        checkAuthentication();
+    </script>
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
@@ -19,6 +47,8 @@
                 <a href="index.html" class="nav-link">← Back to Blog</a>
                 <a href="#posts" class="nav-link active">Manage Posts</a>
                 <a href="#new" class="nav-link">New Post</a>
+                <span class="session-info" id="session-info">Loading...</span>
+                <button class="nav-link logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
@@ -53,8 +83,11 @@
                             <input type="date" id="post-date" name="date" required>
                         </div>
                         <div class="form-group">
-                            <label for="post-read-time">Read Time</label>
-                            <input type="text" id="post-read-time" name="readTime" placeholder="5 min read" required>
+                            <label for="post-read-time">
+                                Read Time 
+                                <span class="help-text">(auto-calculated if empty)</span>
+                            </label>
+                            <input type="text" id="post-read-time" name="readTime" placeholder="Auto-calculated from content">
                         </div>
                     </div>
 

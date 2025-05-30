@@ -418,6 +418,17 @@ document.addEventListener('DOMContentLoaded', function() {
         blogPosts = loadBlogPosts();
     }
     
+    // Show/hide admin link based on authentication
+    const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+    const adminLink = document.getElementById('admin-nav-link');
+    if (isAuthenticated) {
+        adminLink.style.display = 'inline-block';
+        adminLink.href = 'admin.html'; // Change to direct admin access for authenticated users
+        adminLink.textContent = 'Admin';
+    } else {
+        adminLink.style.display = 'none';
+    }
+    
     renderBlogPosts();
     initSmoothScrolling();
     

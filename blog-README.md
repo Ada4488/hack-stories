@@ -1,15 +1,25 @@
 # Hack Stories Blog
 
-A modern, responsive static blog website for sharing technical content with beautiful code syntax highlighting.
+A modern, responsive static blog website with admin functionality for sharing technical content with beautiful code syntax highlighting.
 
 ## Features
 
+### Blog Features
 - **Modern, Clean Design**: Professional and responsive layout
 - **Syntax Highlighting**: Beautiful code blocks with Prism.js
 - **Mobile-Friendly**: Fully responsive design
 - **Fast Loading**: Lightweight static files
 - **Easy to Customize**: Simple HTML, CSS, and JavaScript
 - **SEO-Friendly**: Semantic HTML structure
+
+### Admin Features
+- **Secure Authentication**: Login-protected admin panel
+- **Post Management**: Create, edit, and delete blog posts
+- **Markdown Editor**: Built-in markdown editor with toolbar
+- **Live Preview**: Real-time preview of posts
+- **Auto Read Time**: Automatic calculation of reading time
+- **Session Management**: 24-hour session timeout
+- **Local Storage**: Persistent post storage
 
 ## Getting Started
 
@@ -18,81 +28,87 @@ A modern, responsive static blog website for sharing technical content with beau
 3. Right-click on `index.html` and select "Open with Live Server"
 4. Your blog will open in the browser at `http://localhost:5500`
 
-## Adding New Blog Posts
+## Authentication System
 
-To add new blog posts, edit the `blogPosts` array in `script.js`:
+### Admin Access
+- **Login URL**: `login.html`
+- **Default Credentials**:
+  - Username: `admin`
+  - Password: `hackstories2025!`
+- **Session Duration**: 24 hours
+- **Auto-logout**: Sessions expire automatically
 
-```javascript
-const blogPosts = [
-    {
-        id: 4, // Unique ID
-        title: "Your New Post Title",
-        excerpt: "A brief description of your post...",
-        date: "2025-05-30", // YYYY-MM-DD format
-        readTime: "5 min read",
-        tags: ["JavaScript", "Tutorial"],
-        content: `
-# Your Post Title
+### Security Features
+- Authentication required for admin access
+- Session timeout protection
+- Admin link only visible to authenticated users
+- Logout functionality with confirmation
 
-Your markdown content goes here...
+## Admin Panel Usage
 
-## Code Example
+### Creating Posts
+1. Navigate to the admin panel (login required)
+2. Click "New Post" in the navigation
+3. Fill in the post details:
+   - **Title**: Post title
+   - **Excerpt**: Brief description
+   - **Date**: Publication date
+   - **Read Time**: Auto-calculated from content (or manual override)
+   - **Tags**: Comma-separated tags
+   - **Content**: Markdown content with toolbar assistance
 
-\`\`\`javascript
-function hello() {
-    console.log("Hello, World!");
-}
-\`\`\`
-        `
-    },
-    // ... existing posts
-];
-```
+### Managing Posts
+- View all posts in the "Manage Posts" section
+- Edit existing posts by clicking "Edit"
+- Delete posts with confirmation dialog
+- Posts are automatically saved to localStorage
 
-## Supported Code Languages
-
-The blog supports syntax highlighting for many programming languages:
-
-- JavaScript
-- Python
-- HTML
-- CSS
-- JSON
-- Bash/Shell
-- SQL
-- And many more!
-
-## Customization
-
-### Changing Colors
-
-Edit the CSS variables in `styles.css`:
-
-```css
-:root {
-    --primary-color: #2563eb;
-    --accent-color: #f59e0b;
-    /* ... other variables */
-}
-```
-
-### Adding New Sections
-
-Add new sections to `index.html` and update the navigation accordingly.
-
-### Modifying the Layout
-
-The blog uses CSS Grid and Flexbox for layout. Modify the styles in `styles.css` to change the appearance.
+### Read Time Calculation
+- Automatically calculated based on content length
+- Uses 200 words per minute reading speed
+- Updates in real-time as you type
+- Can be manually overridden if needed
 
 ## File Structure
 
 ```
 /
-├── index.html          # Main HTML file
-├── styles.css          # CSS styles
-├── script.js           # JavaScript functionality
-└── README.md          # This file
+├── index.html          # Main blog page
+├── login.html          # Admin login page
+├── admin.html          # Admin panel (protected)
+├── styles.css          # Main CSS styles
+├── admin-styles.css    # Admin-specific styles
+├── script.js           # Blog functionality
+├── admin.js            # Admin functionality
+└── blog-README.md      # This documentation
 ```
+
+## Customization
+
+### Changing Admin Credentials
+Edit the credentials in `login.html`:
+
+```javascript
+const ADMIN_CREDENTIALS = {
+    username: 'your-username',
+    password: 'your-secure-password'
+};
+```
+
+### Modifying Read Time Calculation
+Adjust the reading speed in `admin.js`:
+
+```javascript
+calculateReadTime(content) {
+    const wordsPerMinute = 200; // Change this value
+    // ... rest of function
+}
+```
+
+### Styling Customization
+- Edit CSS variables in `styles.css` for colors and spacing
+- Modify `admin-styles.css` for admin panel appearance
+- Add new components by extending existing CSS classes
 
 ## Technologies Used
 
@@ -101,6 +117,7 @@ The blog uses CSS Grid and Flexbox for layout. Modify the styles in `styles.css`
 - **JavaScript**: Dynamic content and interactions
 - **Prism.js**: Syntax highlighting for code blocks
 - **Google Fonts**: Inter and JetBrains Mono fonts
+- **LocalStorage**: Client-side data persistence
 
 ## Browser Support
 
@@ -108,6 +125,13 @@ The blog uses CSS Grid and Flexbox for layout. Modify the styles in `styles.css`
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
+
+## Security Considerations
+
+- Authentication is client-side only (suitable for personal/demo use)
+- For production use, implement server-side authentication
+- Change default credentials before deployment
+- Consider implementing password hashing for production
 
 ## License
 
