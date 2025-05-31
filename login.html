@@ -188,8 +188,8 @@
             return bytes.buffer;
         }
 
-        // Check if already logged in
-        if (localStorage.getItem('adminAuthenticated') === 'true') {
+        // Check if already logged in - MODIFIED to force fresh auth when in SETUP_MODE
+        if (localStorage.getItem('adminAuthenticated') === 'true' && !SETUP_MODE) {
             // Verify if the login was with the current admin passkey system
             // This is a soft check; a more robust check would involve re-auth or session tokens
             if (!localStorage.getItem(ADMIN_PASSKEY_ID_KEY)) {
@@ -207,6 +207,14 @@
                 localStorage.setItem('adminSecretToken', secretAccessToken);
                 window.location.href = `a91b72d3-management-console.html?token=${secretAccessToken}`;
             }
+        } else if (SETUP_MODE) {
+            // Clear all authentication data when in SETUP_MODE to force fresh registration
+            localStorage.removeItem('adminAuthenticated');
+            localStorage.removeItem('adminLoginTime');
+            localStorage.removeItem('adminAuthMethod');
+            localStorage.removeItem('adminSecretToken');
+            localStorage.removeItem('adminUserData');
+            console.log('SETUP_MODE: Cleared existing auth to ensure fresh passkey registration.');
         }
 
         // Initialize Passkey when page loads
@@ -214,25 +222,25 @@
             clearPotentiallyOldAuthData(); // Clear old session/auth data first
             initializePasskey();
             
-            // Show emergency access button if in SETUP_MODE
-            if (SETUP_MODE) {
-                document.getElementById('dev-admin-emergency').style.display = 'block';
-                document.getElementById('emergency-access-btn').addEventListener('click', function() {
-                    // Create a simulated credential ID for development use
-                    const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
-                    localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
-                    authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
-                });
-            }
+            // Don't show emergency access by default, only show it if WebAuthn fails
+            // We'll handle this in the catch block of handlePasskeyAuth instead
+            document.getElementById('dev-admin-emergency').style.display = 'none';
+            document.getElementById('emergency-access-btn').addEventListener('click', function() {
+                // Create a simulated credential ID for development use
+                const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
+                localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
+                authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
+            });
         });
 
-        // NEW: Function to clear old or potentially compromised localStorage items
+        // ENHANCED: Function to clear old or potentially compromised localStorage items
         function clearPotentiallyOldAuthData() {
             // These are general session items that should be cleared if the auth method/key changes
             localStorage.removeItem('adminAuthenticated');
             localStorage.removeItem('adminLoginTime');
             localStorage.removeItem('adminAuthMethod');
             localStorage.removeItem('adminUserData');
+            localStorage.removeItem('adminSecretToken');
             
             // Specifically remove the OLD passkey credential ID if it exists
             localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
@@ -242,6 +250,7 @@
             // This ensures that if an admin wants to re-register, they can.
             if (SETUP_MODE) {
                 localStorage.removeItem(ADMIN_PASSKEY_ID_KEY);
+                localStorage.removeItem('adminSetupComplete'); // Clear setup completion flag
                 console.log('SETUP_MODE is true: Cleared existing admin passkey ID to allow re-registration.');
             }
         }
@@ -299,15 +308,12 @@
             } catch (error) {
                 console.error('Passkey error:', error);
                 
-                // Emergency admin access for development environments
+                // Show emergency access option for development environments
                 if (SETUP_MODE && isRegistering) {
-                    console.log('Using emergency admin setup due to WebAuthn error');
-                    // Create a simulated credential ID for development use
-                    const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
-                    localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
-                    showError('');
-                    alert('DEVELOPMENT MODE: Emergency admin credentials created. For production, implement a stronger fallback mechanism.');
-                    authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
+                    console.log('WebAuthn error occurred during registration:', error);
+                    showError(`WebAuthn error: ${error.message || error}. You can use the emergency access option below.`);
+                    // Show emergency access button now that WebAuthn has failed
+                    document.getElementById('dev-admin-emergency').style.display = 'block';
                     return;
                 }
                 
