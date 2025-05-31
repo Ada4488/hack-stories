@@ -1,15 +1,16 @@
-# Hack Stories - Retro Blog 🎨✨
+# Hack Stories - Classic Mac OS Themed Blog 🍎💻
 
-A beautiful, fully-featured static blog with retro styling inspired by vintage design aesthetics. Features complete admin functionality, authentication, and automatic read time calculation.
+A beautiful, fully-featured static blog with classic macOS styling inspired by System 7 and Mac OS 8/9 aesthetics. Features complete admin functionality, passkey authentication, and automatic read time calculation.
 
-## 🎨 Retro Theme Features
+## 🖥️ Classic Mac OS Theme Features
 
-The blog now features a warm, vintage-inspired design with:
+The blog now features a nostalgic classic Mac OS interface with:
 
-- **Color Palette**: Rich browns (#c8885b, #8b4513), gold accents (#d4af37), and cream backgrounds (#fdf6e3)
-- **Typography**: Playfair Display (serif) for headings and Source Sans Pro for body text
-- **Visual Elements**: Gradient borders, decorative accents, vintage shadows, and elegant animations
-- **Consistent Styling**: Retro theme applied across all pages (main blog, admin panel, login)
+- **Color Palette**: Grayscale palette with iconic blacks (#000000), whites, and grays (#dddddd, #cccccc)
+- **Typography**: Chicago-style font for headings and Monaco for code blocks
+- **Visual Elements**: 3D beveled buttons, black title bars, pixel-perfect borders, and classic Mac window controls
+- **Authentic Details**: Classic Mac scrollbars, checkboxes, form elements, and the iconic "happy Mac" face icon
+- **Consistent Styling**: Mac OS theme applied across all pages (main blog, admin panel, login)
 
 ## ✨ Core Features
 

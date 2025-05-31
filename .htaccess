@@ -1,0 +1,34 @@
+# Block access to admin.html - redirect to login instead
+<Files "admin.html">
+    Order allow,deny
+    Deny from all
+    Redirect 403 /login.html
+</Files>
+
+# Protect your secret admin console path from directory listings
+<Files "a91b72d3-management-console.html">
+    # Allow access but hide from directory listings
+    Options -Indexes
+    
+    # If you want to restrict by IP address, uncomment and customize:
+    # Order Deny,Allow
+    # Deny from all
+    # Allow from 192.168.1.100 # Your IP address
+</Files>
+
+# Disable server signature
+ServerSignature Off
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect against common exploits
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Protect against common SQL injection patterns
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule .* index.php [F,L]
+</IfModule>

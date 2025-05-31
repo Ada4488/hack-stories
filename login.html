@@ -6,7 +6,17 @@
     <title>Admin Login - Hack Stories</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="classic-mac-styles.css">
+    <link rel="stylesheet" href="classic-mac-extras.css">
+    <!-- Override Google fonts with system fonts similar to classic Mac OS -->
+    <style>
+        @font-face {
+            font-family: 'Chicago';
+            src: local('Chicago'), local('Charcoal'), local('Monaco');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
     <style>
         .login-container {
             min-height: 100vh;
@@ -93,17 +103,13 @@
         }
         
         .passkey-btn {
-            border-color: var(--primary-color) !important;
-            color: var(--primary-color) !important;
             width: 100%; /* Make passkey button full width */
-            padding: 0.75rem; /* Adjust padding as needed */
-            font-size: 1rem; /* Adjust font size as needed */
+            padding: 0.5rem; /* Classic Mac had smaller padding */
+            font-size: 1rem;
+            /* Classic Mac styling will be applied from classic-mac-styles.css */
         }
         
-        .passkey-btn:hover {
-            background: var(--primary-color) !important;
-            color: white !important;
-        }
+        /* We don't need the hover styles since they're in classic-mac-styles.css */
         
         .btn {
             display: flex;
@@ -124,6 +130,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
+                <div class="classic-mac-face"></div>
                 <h1 class="login-title">Admin Login</h1>
                 <p class="login-subtitle">Use your Passkey to access the admin panel</p>
             </div>
@@ -344,7 +351,13 @@
             // No longer storing generic 'adminUserData', specific passkey ID is the key
             // localStorage.removeItem('adminUserData'); // Ensure old data is gone
 
-            window.location.href = 'admin.html';
+            // Generate a secret access token (valid only for this session)
+            const secretAccessToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            localStorage.setItem('adminSecretToken', secretAccessToken);
+
+            // Redirect to the hard-to-guess admin page with the token
+            window.location.href = `a91b72d3-management-console.html?token=${secretAccessToken}`;
         }
 
         function resetPasskeyButton() {

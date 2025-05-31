@@ -26,8 +26,18 @@
         function checkAuthentication() {
             const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
             const loginTime = localStorage.getItem('adminLoginTime');
+            const storedToken = localStorage.getItem('adminSecretToken');
             
-            if (!isAuthenticated) {
+            // Extract URL token parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+            
+            // Verify both authentication status and that the token matches
+            if (!isAuthenticated || !storedToken || storedToken !== urlToken) {
+                console.log('Authentication or token validation failed');
+                localStorage.removeItem('adminAuthenticated');
+                localStorage.removeItem('adminLoginTime');
+                localStorage.removeItem('adminSecretToken');
                 window.location.href = 'login.html';
                 return;
             }
@@ -38,6 +48,7 @@
                 if (hoursSinceLogin > 24) {
                     localStorage.removeItem('adminAuthenticated');
                     localStorage.removeItem('adminLoginTime');
+                    localStorage.removeItem('adminSecretToken');
                     alert('Your session has expired. Please log in again.');
                     window.location.href = 'login.html';
                     return;
@@ -172,6 +183,6 @@ function hello() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-    <script src="admin.js"></script>
+    <script src="secure-admin.js"></script>
 </body>
 </html>

@@ -6,25 +6,36 @@
 }
 
 :root {
-    /* Retro color palette */
-    --primary-color: #c8885b;
-    --primary-dark: #a06f47;
-    --secondary-color: #8b4513;
-    --accent-color: #d4af37;
-    --text-primary: #3e2723;
-    --text-secondary: #6d4c41;
-    --text-light: #8d6e63;
-    --bg-primary: #fdf6e3;
-    --bg-secondary: #f5eedc;
-    --bg-tertiary: #ede0c8;
-    --border-color: #d7ccc8;
-    --shadow-sm: 0 1px 3px 0 rgba(62, 39, 35, 0.1);
-    --shadow-md: 0 4px 6px -1px rgba(62, 39, 35, 0.15), 0 2px 4px -2px rgba(62, 39, 35, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(62, 39, 35, 0.2), 0 4px 6px -4px rgba(62, 39, 35, 0.1);
-    --radius: 4px;
-    --font-serif: 'Playfair Display', 'Georgia', serif;
-    --font-sans: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'Fira Code', 'Courier New', monospace;
+    /* Classic Mac OS color palette */
+    --primary-color: #000000;
+    --primary-dark: #444444;
+    --secondary-color: #666666;
+    --accent-color: #000000;
+    --text-primary: #000000;
+    --text-secondary: #444444;
+    --text-light: #777777;
+    --bg-primary: #dddddd;
+    --bg-secondary: #cccccc;
+    --bg-tertiary: #bbbbbb;
+    --border-color: #888888;
+    --highlight-color: #3e78fd;
+    --shadow-sm: 1px 1px 0px #ffffff, -1px -1px 0px #888888;
+    --shadow-md: 1px 1px 0px #ffffff, -1px -1px 0px #888888;
+    --shadow-lg: 2px 2px 0px #ffffff, -2px -2px 0px #888888;
+    --radius: 0px; /* Classic Mac has squared corners */
+    --font-serif: 'Chicago', 'Monaco', 'Courier New', monospace;
+    --font-sans: 'Chicago', 'Monaco', 'Helvetica', sans-serif;
+    --font-mono: 'Monaco', 'Courier New', monospace;
+    /* Button variables */
+    --button-bg: #cccccc;
+    --button-border: #888888;
+    --button-text: #000000;
+    --button-highlight: #ffffff;
+    --button-shadow: #888888;
+    /* Window variables */
+    --window-header: linear-gradient(to right, #000000, #000000);
+    --window-border: #000000;
+    --window-bg: #dddddd;
 }
 
 body {

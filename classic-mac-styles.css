@@ -1,0 +1,543 @@
+/* Classic Mac OS Theme for Hack Stories Admin */
+
+/* Base Colors and Variables */
+:root {
+    /* Classic Mac OS (System 7) color palette */
+    --primary-color: #000000;
+    --primary-dark: #444444;
+    --secondary-color: #666666;
+    --accent-color: #000000;
+    --text-primary: #000000;
+    --text-secondary: #444444;
+    --text-light: #777777;
+    --bg-primary: #dddddd;
+    --bg-secondary: #cccccc;
+    --bg-tertiary: #bbbbbb;
+    --border-color: #000000;
+    --highlight-color: #0000d4; /* Classic Mac selection blue */
+    --shadow-sm: 1px 1px 0px #ffffff, -1px -1px 0px #888888;
+    --shadow-md: 1px 1px 0px #ffffff, -1px -1px 0px #888888;
+    --shadow-lg: 2px 2px 0px #ffffff, -2px -2px 0px #888888;
+    --radius: 0px; /* Classic Mac has squared corners */
+    --font-serif: "Chicago", "Geneva", "Monaco", monospace;
+    --font-sans: "Chicago", "Geneva", "Monaco", sans-serif;
+    --font-mono: "Monaco", "Courier", monospace;
+    
+    /* Button variables */
+    --button-bg: #cccccc;
+    --button-border: #000000;
+    --button-text: #000000;
+    --button-highlight: #ffffff;
+    --button-shadow: #888888;
+    
+    /* Window variables */
+    --window-header: #000000;
+    --window-border: #000000;
+    --window-bg: #dddddd;
+    --window-title-stripe: 2px; /* Classic striped title bar pattern size */
+}
+
+/* Pattern for desktop background - optional classic Mac pattern */
+body {
+    background-image: 
+        repeating-linear-gradient(45deg, #cccccc 0px, #cccccc 1px, var(--bg-primary) 1px, var(--bg-primary) 2px),
+        repeating-linear-gradient(135deg, #cccccc 0px, #cccccc 1px, var(--bg-primary) 1px, var(--bg-primary) 2px);
+    background-size: 4px 4px;
+}
+
+/* Override Body Styles */
+body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    background-image: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Classic Mac OS Window Style */
+.admin-section, .login-card, .modal-content, .preview-container, .article {
+    border: 2px solid var(--window-border);
+    border-radius: var(--radius);
+    background: var(--window-bg);
+    box-shadow: 
+        inset 1px 1px 0px #ffffff, 
+        inset -1px -1px 0px #888888;
+    position: relative;
+    margin-bottom: 16px;
+    padding-top: 25px; /* Space for the title bar */
+}
+
+/* Classic Mac Title Bar */
+.admin-section::before, .login-card::before, .modal-content::before, .preview-container::before, .preview-container h3, .article::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: var(--window-header);
+    border-bottom: 1px solid var(--window-border);
+    z-index: 2;
+}
+
+/* Classic Window Title */
+.admin-title, .login-title, .section-title, .editor-title {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: #ffffff;
+    text-align: center;
+    margin-top: -22px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 3;
+    text-shadow: none;
+    font-weight: normal;
+}
+
+.section-title::after {
+    display: none;
+}
+
+/* Classic Mac Buttons */
+.btn {
+    padding: 3px 12px;
+    border: 1px solid var(--button-border);
+    border-radius: var(--radius);
+    font-weight: normal;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.1s ease;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: normal;
+    font-family: var(--font-sans);
+    background: var(--button-bg);
+    color: var(--button-text);
+    position: relative;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    min-width: 70px;
+    text-align: center;
+}
+
+.btn:active {
+    box-shadow: 
+        inset -1px -1px 0px var(--button-highlight),
+        inset 1px 1px 0px var(--button-shadow);
+    transform: translateY(1px);
+}
+
+.btn-primary, .btn-secondary, .btn-outline, .btn-danger {
+    background: var(--button-bg);
+    color: var(--button-text);
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    border: 1px solid var(--button-border);
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-outline:hover, .btn-danger:hover {
+    background: #c0c0c0;
+    transform: none;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+}
+
+.btn-danger {
+    background: var(--button-bg);
+    color: var(--button-text);
+}
+
+.btn-danger:hover {
+    background: #c0c0c0;
+}
+
+/* Navigation Styles */
+.navbar {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.classic-mac-menubar {
+    background: white;
+    border-bottom: 2px solid var(--border-color);
+    position: relative;
+}
+
+.classic-mac-menubar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--button-highlight);
+}
+
+.nav-brand h1 {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: var(--text-primary);
+    text-shadow: none;
+}
+
+.nav-link {
+    color: var(--text-primary);
+    font-weight: normal;
+    text-transform: none;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.nav-link.active::after {
+    background: var(--text-primary);
+}
+
+/* Form Styles */
+.form-group input,
+.form-group textarea {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: white;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    padding: 3px; /* Classic Mac had minimal padding */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--text-primary);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+    outline: none;
+}
+
+/* Classic Mac Checkbox */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 1px solid var(--border-color);
+    position: relative;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    font-size: 12px;
+    top: -2px;
+    left: 1px;
+}
+
+/* Classic Mac Radio */
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid var(--border-color);
+    position: relative;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: black;
+    top: 3px;
+    left: 3px;
+}
+
+/* Table Styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+table, th, td {
+    border: 1px solid var(--border-color);
+}
+
+th {
+    background: var(--bg-secondary);
+    text-align: left;
+    padding: 0.5rem;
+}
+
+td {
+    padding: 0.5rem;
+    background: white;
+}
+
+/* Admin Post Card */
+.admin-post-card {
+    background: var(--window-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem 1rem 1rem;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    position: relative;
+}
+
+.admin-post-card::before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: var(--window-header);
+    border-bottom: 1px solid var(--window-border);
+}
+
+.admin-post-card::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 1px solid var(--border-color);
+    box-shadow: inset -1px -1px 0px #888888;
+}
+
+.admin-post-card:hover {
+    transform: none;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    border-color: var(--border-color);
+}
+
+/* Classic Mac Scrollbars */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+}
+
+::-webkit-scrollbar-button:single-button {
+    background: var(--button-bg);
+    border: 1px solid var(--button-border);
+    display: block;
+    height: 16px;
+    width: 16px;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+}
+
+::-webkit-scrollbar-button:single-button:active {
+    box-shadow: 
+        inset -1px -1px 0px var(--button-highlight),
+        inset 1px 1px 0px var(--button-shadow);
+}
+
+::-webkit-scrollbar-button:single-button:vertical:increment {
+    background-image: linear-gradient(45deg, transparent 4px, black 4px, black 6px, transparent 6px),
+                      linear-gradient(135deg, transparent 4px, black 4px, black 6px, transparent 6px);
+    background-position: center 7px;
+    background-repeat: no-repeat;
+}
+
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+    background-image: linear-gradient(225deg, transparent 4px, black 4px, black 6px, transparent 6px),
+                      linear-gradient(315deg, transparent 4px, black 4px, black 6px, transparent 6px);
+    background-position: center 7px;
+    background-repeat: no-repeat;
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--bg-secondary);
+}
+
+/* Modal Styling */
+.modal {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Message Styling */
+.message {
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-primary);
+    box-shadow: 1px 1px 0px white;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+}
+
+.message.success {
+    border: 1px solid #000000;
+    background: var(--bg-primary);
+}
+
+.message.error {
+    border: 1px solid #000000;
+    background: var(--bg-primary);
+}
+
+/* Session Info */
+.session-info {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    border-radius: var(--radius);
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    padding: 3px 12px;
+    font-size: 0.875rem;
+    font-weight: normal;
+    text-shadow: none;
+}
+
+/* Passkey Button */
+.passkey-btn {
+    background: var(--button-bg);
+    color: var(--button-text) !important;
+    border: 1px solid var(--button-border) !important;
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+}
+
+.passkey-btn:hover {
+    background: #c0c0c0 !important;
+    color: var(--button-text) !important;
+}
+
+/* Login Container */
+.login-container {
+    background: var(--bg-primary);
+    background-image: none;
+}
+
+/* Code Editor */
+.editor-toolbar {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toolbar-btn {
+    background: var(--button-bg);
+    border: 1px solid var(--button-border);
+    color: var(--button-text);
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+}
+
+.toolbar-btn:hover {
+    background: #c0c0c0;
+    color: var(--button-text);
+}
+
+.toolbar-btn.active {
+    background: var(--button-bg);
+    color: var(--button-text);
+    box-shadow: 
+        inset -1px -1px 0px var(--button-highlight),
+        inset 1px 1px 0px var(--button-shadow);
+}
+
+/* Classic Mac Window Controls */
+.admin-section::after, 
+.login-card::after, 
+.modal-content::after, 
+.preview-container::after, 
+.article::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 1px solid var(--border-color);
+    box-shadow: inset -1px -1px 0px #888888;
+}
+
+/* Add window decorations and title bar text */
+.admin-section::before::after, 
+.login-card::before::after, 
+.modal-content::before::after, 
+.preview-container::before::after, 
+.article::before::after {
+    content: '⊠ ⊡ ⊟';
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Tags */
+.tag {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    border-radius: var(--radius);
+    box-shadow: 
+        inset 1px 1px 0px var(--button-highlight),
+        inset -1px -1px 0px var(--button-shadow);
+    padding: 1px 6px;
+    font-size: 0.75rem;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Remove gradients and animations */
+.post-card::before,
+.hero::before,
+.article-header::after,
+.footer::before {
+    display: none;
+}
+
+.post-card:hover,
+.btn:hover {
+    transform: none;
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /*-management-console.html
+Disallow: /login.html

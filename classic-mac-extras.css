@@ -1,0 +1,88 @@
+/* Classic Mac OS happy face icon */
+.classic-mac-face {
+    width: 40px;
+    height: 40px;
+    background: black;
+    border-radius: 50%;
+    position: relative;
+    margin: 5px auto;
+}
+
+.classic-mac-face::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 8px;
+    border: 2px solid white;
+    border-bottom: none;
+    border-radius: 50% 50% 0 0;
+}
+
+.classic-mac-face::after {
+    content: ':)';
+    position: absolute;
+    color: white;
+    font-size: 20px;
+    top: 7px;
+    left: 12px;
+    font-family: monospace;
+}
+
+/* Classic Mac OS watch cursor */
+.mac-wait-cursor {
+    cursor: url('data:image/gif;base64,R0lGODlhEAAQAIAAAAAAAAMDAyH/C05FVFNDQVBFMi4wAwEAAAAh+QQJBQABACwAAAAAEAAQAAACI4xvAHMpLRpFsw1D2Tv33F2WdwyJUmCubKeRXnGFI3MlJxQAIfkEBQUAAQAsAAAAABAAEAAAAiaMbQDQYE0hTjpPZml8z/31lVXbcJERm+obqYvpJCfFJyORtEEAIfkEBQUAAQAsAAAAABAAEAAAAieMj3HLzQ+jKrW61a7r/2+iQXykkaSIruNmBmzFbLIGcis1YhAAIfkEBQUAAQAsAAAAABAAEAAAAh+MYQCgqC1AjovRQcu9buv/jKBXlWOSlKiKKEKFJRMFACH5BAUFAAEALAAAAAAQABAAAAIfjI8By+2QnpSv2our3k37DndYIWaZ5JOopr2pBCsFACH5BAUFAAEALAAAAAAQABAAAAIjjG0AcylNG0WzDUPZO/fcXZZ3DIlSYK5sp5FecYUjcyUnFAA7', auto;
+}
+
+/* Classic Mac Spinner animation */
+.mac-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.mac-spinner::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: black;
+    border-left-color: black;
+    animation: mac-spinner-anim 1s infinite ease;
+}
+
+@keyframes mac-spinner-anim {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Use this to display the classic Mac "About this Macintosh" info box pattern */
+.classic-mac-info-box {
+    border: 2px solid black;
+    background: #dddddd;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
+}
+
+.classic-mac-info-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: 
+        linear-gradient(to right, 
+            black 2px, transparent 2px
+        ),
+        black;
+    background-size: 4px 4px;
+    border-bottom: 1px solid black;
+}
