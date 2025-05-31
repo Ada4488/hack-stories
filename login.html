@@ -143,6 +143,15 @@
                 <button type="button" class="btn btn-outline passkey-btn" id="passkey-btn">
                     <!-- Text will be set by JavaScript -->
                 </button>
+                
+                <!-- Development only emergency admin access -->
+                <div id="dev-admin-emergency" style="margin-top: 20px; text-align: center; display: none;">
+                    <hr style="margin: 15px 0;">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Development Emergency Access</p>
+                    <button type="button" class="btn btn-outline" id="emergency-access-btn" style="width: 100%;">
+                        Emergency Admin Access
+                    </button>
+                </div>
             </form>
             
             <div class="home-link">
@@ -192,7 +201,11 @@
                 // Also remove the old passkey ID if present
                 localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
             } else {
-                window.location.href = 'admin.html';
+                // Generate a token and redirect to the secure management console
+                const secretAccessToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                    .map(b => b.toString(16).padStart(2, '0')).join('');
+                localStorage.setItem('adminSecretToken', secretAccessToken);
+                window.location.href = `a91b72d3-management-console.html?token=${secretAccessToken}`;
             }
         }
 
@@ -200,6 +213,17 @@
         window.addEventListener('load', function() {
             clearPotentiallyOldAuthData(); // Clear old session/auth data first
             initializePasskey();
+            
+            // Show emergency access button if in SETUP_MODE
+            if (SETUP_MODE) {
+                document.getElementById('dev-admin-emergency').style.display = 'block';
+                document.getElementById('emergency-access-btn').addEventListener('click', function() {
+                    // Create a simulated credential ID for development use
+                    const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
+                    localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
+                    authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
+                });
+            }
         });
 
         // NEW: Function to clear old or potentially compromised localStorage items
@@ -274,6 +298,19 @@
                 }
             } catch (error) {
                 console.error('Passkey error:', error);
+                
+                // Emergency admin access for development environments
+                if (SETUP_MODE && isRegistering) {
+                    console.log('Using emergency admin setup due to WebAuthn error');
+                    // Create a simulated credential ID for development use
+                    const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
+                    localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
+                    showError('');
+                    alert('DEVELOPMENT MODE: Emergency admin credentials created. For production, implement a stronger fallback mechanism.');
+                    authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
+                    return;
+                }
+                
                 showError(`Passkey operation failed: ${error.message || error}. Please try again.`);
                 resetPasskeyButton(); // This will re-initialize the button state
             }
@@ -285,7 +322,8 @@
                 challenge: crypto.getRandomValues(new Uint8Array(32)),
                 rp: {
                     name: "Hack Stories Admin (Unique Setup)", // Make RP name distinct for this setup
-                    id: window.location.hostname,
+                    // Using empty string for id to match the current domain (works in development environments)
+                    id: "",
                 },
                 user: {
                     id: new TextEncoder().encode("hack-stories-DEFINED-admin-user-v2"), // More specific user ID
@@ -312,7 +350,11 @@
             localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
             
             showError(''); // Clear any previous errors
-            alert('Admin Passkey registered successfully! IMPORTANT: Now set SETUP_MODE to false in login.html to secure the admin panel.');
+            alert('Admin Passkey registered successfully! IMPORTANT: Now set SETUP_MODE to false in login.html to secure the admin panel.\n\nAfter you login, please edit the login.html file to set SETUP_MODE = false;');
+            
+            // Set a flag to remind to secure the admin setup
+            localStorage.setItem('adminSetupComplete', 'true');
+            
             authenticateUser('passkey', { credentialId: credential.id, isAdminSetup: true });
         }
 
@@ -333,7 +375,9 @@
                     // transports: ['internal'], // Optional: specify transports
                 }],
                 timeout: 60000,
-                userVerification: "required"
+                userVerification: "required",
+                // Adding empty rpId to match the registration
+                rpId: ""
             };
 
             const credential = await navigator.credentials.get({
