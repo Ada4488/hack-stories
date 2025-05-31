@@ -704,6 +704,7 @@ function logout() {
         localStorage.removeItem('adminAuthenticated');
         localStorage.removeItem('adminLoginTime');
         localStorage.removeItem('adminAuthMethod');
+        localStorage.removeItem('adminSecretToken'); // Clear the session token
         // localStorage.removeItem('adminUserData'); // Already removed in login logic
         
         // IMPORTANT: Do NOT remove the ADMIN_PASSKEY_ID_KEY on logout.

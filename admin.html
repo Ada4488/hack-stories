@@ -22,12 +22,15 @@
 <body>
     <!-- Authentication Protection Script -->
     <script>
-        // Check authentication before loading admin panel
+        // Check authentication before loading admin panel and redirect to secure console
         function checkAuthentication() {
             const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
             const loginTime = localStorage.getItem('adminLoginTime');
+            const adminPasskeyId = localStorage.getItem('definedAdminPasskeyCredentialId');
+            const secretToken = localStorage.getItem('adminSecretToken');
             
-            if (!isAuthenticated) {
+            // Always redirect to login if not authenticated
+            if (!isAuthenticated || !adminPasskeyId) {
                 window.location.href = 'login.html';
                 return;
             }
@@ -38,10 +41,24 @@
                 if (hoursSinceLogin > 24) {
                     localStorage.removeItem('adminAuthenticated');
                     localStorage.removeItem('adminLoginTime');
+                    localStorage.removeItem('adminSecretToken');
                     alert('Your session has expired. Please log in again.');
                     window.location.href = 'login.html';
                     return;
                 }
+            }
+            
+            // Redirect to the secure management console if authenticated
+            if (isAuthenticated && secretToken) {
+                window.location.href = `a91b72d3-management-console.html?token=${secretToken}`;
+                return;
+            } else if (isAuthenticated) {
+                // Generate new token if missing but user is authenticated
+                const newSecretToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                    .map(b => b.toString(16).padStart(2, '0')).join('');
+                localStorage.setItem('adminSecretToken', newSecretToken);
+                window.location.href = `a91b72d3-management-console.html?token=${newSecretToken}`;
+                return;
             }
         }
         
