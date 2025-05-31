@@ -29,7 +29,7 @@
             const adminPasskeyId = localStorage.getItem('definedAdminPasskeyCredentialId');
             const secretToken = localStorage.getItem('adminSecretToken');
             
-            // Always redirect to login if not authenticated
+            // Always redirect to login if not authenticated with a proper passkey
             if (!isAuthenticated || !adminPasskeyId) {
                 window.location.href = 'login.html';
                 return;

@@ -700,12 +700,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Logout function
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
-        // Clear all authentication data
+        // Clear all authentication and session data
         localStorage.removeItem('adminAuthenticated');
         localStorage.removeItem('adminLoginTime');
         localStorage.removeItem('adminAuthMethod');
         localStorage.removeItem('adminSecretToken'); // Clear the session token
-        // localStorage.removeItem('adminUserData'); // Already removed in login logic
+        localStorage.removeItem('adminUserData');  // Clear any old user data
         
         // IMPORTANT: Do NOT remove the ADMIN_PASSKEY_ID_KEY on logout.
         // This key identifies the *registered* admin passkey. Removing it would 
@@ -716,6 +716,7 @@ function logout() {
         // Remove the old key if it somehow still exists
         localStorage.removeItem('adminPasskeyCredentialId'); 
 
+        // Redirect to login page
         window.location.href = 'login.html';
     }
 }

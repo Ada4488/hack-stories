@@ -27,13 +27,14 @@
             const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
             const loginTime = localStorage.getItem('adminLoginTime');
             const storedToken = localStorage.getItem('adminSecretToken');
+            const adminPasskeyId = localStorage.getItem('definedAdminPasskeyCredentialId');
             
             // Extract URL token parameter
             const urlParams = new URLSearchParams(window.location.search);
             const urlToken = urlParams.get('token');
             
-            // Verify both authentication status and that the token matches
-            if (!isAuthenticated || !storedToken || storedToken !== urlToken) {
+            // Verify authentication status, passkey presence, and token matching
+            if (!isAuthenticated || !adminPasskeyId || !storedToken || storedToken !== urlToken) {
                 console.log('Authentication or token validation failed');
                 localStorage.removeItem('adminAuthenticated');
                 localStorage.removeItem('adminLoginTime');

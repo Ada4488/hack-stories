@@ -162,7 +162,7 @@
 
     <script>
         // IMPORTANT: Set to false after initial admin passkey registration!
-        const SETUP_MODE = true; // Temporarily set to true to enable passkey registration
+        const SETUP_MODE = false; // Set to false to prevent unauthorized admin registration
 
         // NEW: Define the specific localStorage key for the admin passkey
         const ADMIN_PASSKEY_ID_KEY = 'definedAdminPasskeyCredentialId';
@@ -222,15 +222,18 @@
             clearPotentiallyOldAuthData(); // Clear old session/auth data first
             initializePasskey();
             
-            // Don't show emergency access by default, only show it if WebAuthn fails
-            // We'll handle this in the catch block of handlePasskeyAuth instead
+            // Emergency access should always be hidden in production
             document.getElementById('dev-admin-emergency').style.display = 'none';
-            document.getElementById('emergency-access-btn').addEventListener('click', function() {
-                // Create a simulated credential ID for development use
-                const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
-                localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
-                authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
-            });
+            
+            // Only add event listener for emergency button when in setup mode
+            if (SETUP_MODE) {
+                document.getElementById('emergency-access-btn').addEventListener('click', function() {
+                    // Create a simulated credential ID for development use
+                    const simulatedCredentialId = 'dev-emergency-credential-' + Date.now();
+                    localStorage.setItem(ADMIN_PASSKEY_ID_KEY, simulatedCredentialId);
+                    authenticateUser('emergency', { credentialId: simulatedCredentialId, isAdminSetup: true });
+                });
+            }
         });
 
         // ENHANCED: Function to clear old or potentially compromised localStorage items
@@ -308,12 +311,13 @@
             } catch (error) {
                 console.error('Passkey error:', error);
                 
-                // Show emergency access option for development environments
+                // Only show emergency access during setup mode AND only when WebAuthn registration fails
                 if (SETUP_MODE && isRegistering) {
                     console.log('WebAuthn error occurred during registration:', error);
-                    showError(`WebAuthn error: ${error.message || error}. You can use the emergency access option below.`);
-                    // Show emergency access button now that WebAuthn has failed
-                    document.getElementById('dev-admin-emergency').style.display = 'block';
+                    showError(`WebAuthn error: ${error.message || error}. Please try a different browser or device.`);
+                    
+                    // Only show emergency button in setup mode
+                    document.getElementById('dev-admin-emergency').style.display = SETUP_MODE ? 'block' : 'none';
                     return;
                 }
                 
@@ -361,6 +365,7 @@
             // Set a flag to remind to secure the admin setup
             localStorage.setItem('adminSetupComplete', 'true');
             
+            // Proceed with authentication using the newly registered passkey
             authenticateUser('passkey', { credentialId: credential.id, isAdminSetup: true });
         }
 
