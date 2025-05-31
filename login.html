@@ -133,12 +133,8 @@
                     <!-- Error messages will appear here -->
                 </div>
                 
-                <!-- Passkey button becomes the main login method -->
                 <button type="button" class="btn btn-outline passkey-btn" id="passkey-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 10V8C6 5.79 7.79 4 10 4H14C16.21 4 18 5.79 18 8V10H19C20.1 10 21 10.9 21 12V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V12C3 10.9 3.9 10 5 10H6ZM8 8V10H16V8C16 6.9 15.1 6 14 6H10C8.9 6 8 6.9 8 8Z"/>
-                    </svg>
-                    Sign in with Passkey
+                    <!-- Text will be set by JavaScript -->
                 </button>
             </form>
             
@@ -149,107 +145,189 @@
     </div>
 
     <script>
-        // Passkey is the only authentication method
+        // IMPORTANT: Set to false after initial admin passkey registration!
+        const SETUP_MODE = false; 
+
+        // NEW: Define the specific localStorage key for the admin passkey
+        const ADMIN_PASSKEY_ID_KEY = 'definedAdminPasskeyCredentialId';
+        const OLD_ADMIN_PASSKEY_ID_KEY = 'adminPasskeyCredentialId'; // Old key for cleanup
+
+        // Helper function to convert ArrayBuffer to Base64URL string
+        function arrayBufferToBase64Url(buffer) {
+            return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
+                .replace(/\\+/g, '-')
+                .replace(/\\//g, '_')
+                .replace(/=+$/, '');
+        }
+
+        // Helper function to convert Base64URL string to ArrayBuffer
+        function base64UrlToArrayBuffer(base64Url) {
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
 
         // Check if already logged in
         if (localStorage.getItem('adminAuthenticated') === 'true') {
-            window.location.href = 'admin.html';
+            // Verify if the login was with the current admin passkey system
+            // This is a soft check; a more robust check would involve re-auth or session tokens
+            if (!localStorage.getItem(ADMIN_PASSKEY_ID_KEY)) {
+                // If the new key isn't set, but they are 'authenticated', it's an old session. Log them out.
+                localStorage.removeItem('adminAuthenticated');
+                localStorage.removeItem('adminLoginTime');
+                localStorage.removeItem('adminAuthMethod');
+                localStorage.removeItem('adminUserData');
+                // Also remove the old passkey ID if present
+                localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
+            } else {
+                window.location.href = 'admin.html';
+            }
         }
 
         // Initialize Passkey when page loads
         window.addEventListener('load', function() {
+            clearPotentiallyOldAuthData(); // Clear old session/auth data first
             initializePasskey();
-            clearOldSessions(); // Keep this to clear expired sessions
         });
+
+        // NEW: Function to clear old or potentially compromised localStorage items
+        function clearPotentiallyOldAuthData() {
+            // These are general session items that should be cleared if the auth method/key changes
+            localStorage.removeItem('adminAuthenticated');
+            localStorage.removeItem('adminLoginTime');
+            localStorage.removeItem('adminAuthMethod');
+            localStorage.removeItem('adminUserData');
+            
+            // Specifically remove the OLD passkey credential ID if it exists
+            localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
+            
+            // If SETUP_MODE is true, it implies we might be re-registering,
+            // so clear the current defined admin passkey ID to allow a new one to be set.
+            // This ensures that if an admin wants to re-register, they can.
+            if (SETUP_MODE) {
+                localStorage.removeItem(ADMIN_PASSKEY_ID_KEY);
+                console.log('SETUP_MODE is true: Cleared existing admin passkey ID to allow re-registration.');
+            }
+        }
 
         // Initialize Passkey Authentication
         function initializePasskey() {
             const passkeyBtn = document.getElementById('passkey-btn');
             
-            // Check if WebAuthn is supported
             if (!window.PublicKeyCredential) {
-                passkeyBtn.disabled = true;
                 passkeyBtn.innerHTML = '<span>Passkeys Not Supported</span>';
                 passkeyBtn.title = 'Your browser does not support passkeys';
+                passkeyBtn.disabled = true;
                 return;
             }
 
-            passkeyBtn.addEventListener('click', handlePasskeyAuth);
-        }
+            const adminCredentialId = localStorage.getItem(ADMIN_PASSKEY_ID_KEY); // Use new key
 
-        // Handle Passkey Authentication
-        async function handlePasskeyAuth() {
-            const passkeyBtn = document.getElementById('passkey-btn');
-            passkeyBtn.disabled = true;
-            passkeyBtn.innerHTML = '<span>Authenticating...</span>';
-
-            try {
-                // Check if user has existing passkey
-                const existingCredential = localStorage.getItem('passkeyCredentialId');
-                
-                if (existingCredential) {
-                    // Authenticate with existing passkey
-                    await authenticateWithPasskey(existingCredential);
+            if (adminCredentialId) {
+                passkeyBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 10V8C6 5.79 7.79 4 10 4H14C16.21 4 18 5.79 18 8V10H19C20.1 10 21 10.9 21 12V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V12C3 10.9 3.9 10 5 10H6ZM8 8V10H16V8C16 6.9 15.1 6 14 6H10C8.9 6 8 6.9 8 8Z"/>
+                    </svg>
+                    Sign in with Admin Passkey
+                `;
+                passkeyBtn.addEventListener('click', () => handlePasskeyAuth(false));
+            } else {
+                if (SETUP_MODE) {
+                    passkeyBtn.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                        Register Admin Passkey
+                    `;
+                    passkeyBtn.addEventListener('click', () => handlePasskeyAuth(true));
                 } else {
-                    // Register new passkey
-                    await registerPasskey();
+                    passkeyBtn.innerHTML = '<span>Admin Setup Required</span>';
+                    passkeyBtn.disabled = true;
+                    showError(`Admin Passkey not configured. Enable SETUP_MODE in login.html to register your unique admin passkey.`);
                 }
-            } catch (error) {
-                console.error('Passkey error:', error);
-                showError('Passkey authentication failed. Please try again.');
-                resetPasskeyButton();
             }
         }
 
-        // Register new passkey
-        async function registerPasskey() {
+        // Handle Passkey Authentication or Registration
+        async function handlePasskeyAuth(isRegistering) {
+            const passkeyBtn = document.getElementById('passkey-btn');
+            passkeyBtn.disabled = true;
+            passkeyBtn.innerHTML = '<span>Processing...</span>';
+
+            try {
+                if (isRegistering) {
+                    await registerAdminPasskey();
+                } else {
+                    await authenticateAdminWithPasskey();
+                }
+            } catch (error) {
+                console.error('Passkey error:', error);
+                showError(`Passkey operation failed: ${error.message || error}. Please try again.`);
+                resetPasskeyButton(); // This will re-initialize the button state
+            }
+        }
+
+        // Register new admin passkey
+        async function registerAdminPasskey() {
             const publicKeyCredentialCreationOptions = {
-                challenge: new Uint8Array(32),
+                challenge: crypto.getRandomValues(new Uint8Array(32)),
                 rp: {
-                    name: "Hack Stories Admin",
+                    name: "Hack Stories Admin (Unique Setup)", // Make RP name distinct for this setup
                     id: window.location.hostname,
                 },
                 user: {
-                    id: new TextEncoder().encode("admin-user"),
-                    name: "Admin",
-                    displayName: "Blog Administrator",
+                    id: new TextEncoder().encode("hack-stories-DEFINED-admin-user-v2"), // More specific user ID
+                    name: "defined_admin@hackstories",
+                    displayName: "Hack Stories (Primary Administrator)",
                 },
-                pubKeyCredParams: [{alg: -7, type: "public-key"}],
+                pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg: -257, type: "public-key"}], // ES256 and RS256
                 authenticatorSelection: {
-                    authenticatorAttachment: "platform",
-                    userVerification: "required"
+                    authenticatorAttachment: "platform", // or "cross-platform"
+                    userVerification: "required",
+                    residentKey: "required" // Discoverable credential
                 },
                 timeout: 60000,
-                attestation: "direct"
+                attestation: "none" // "direct" or "indirect" might be used for more advanced scenarios
             };
-
-            // Fill challenge with random values
-            window.crypto.getRandomValues(publicKeyCredentialCreationOptions.challenge);
 
             const credential = await navigator.credentials.create({
                 publicKey: publicKeyCredentialCreationOptions
             });
 
-            // Store credential ID for future authentication
-            localStorage.setItem('passkeyCredentialId', credential.id);
-            localStorage.setItem('passkeyRegistered', 'true');
+            // Store using the NEW key
+            localStorage.setItem(ADMIN_PASSKEY_ID_KEY, arrayBufferToBase64Url(credential.id));
+            // Explicitly remove the OLD key if it exists, to prevent any conflicts or old data usage
+            localStorage.removeItem(OLD_ADMIN_PASSKEY_ID_KEY);
             
-            authenticateUser('passkey', { credentialId: credential.id });
+            showError(''); // Clear any previous errors
+            alert('Admin Passkey registered successfully! IMPORTANT: Now set SETUP_MODE to false in login.html to secure the admin panel.');
+            authenticateUser('passkey', { credentialId: credential.id, isAdminSetup: true });
         }
 
-        // Authenticate with existing passkey
-        async function authenticateWithPasskey(credentialId) {
+        // Authenticate with existing admin passkey
+        async function authenticateAdminWithPasskey() {
+            const adminCredentialIdString = localStorage.getItem(ADMIN_PASSKEY_ID_KEY); // Use new key
+            if (!adminCredentialIdString) {
+                showError('Admin Passkey not registered. Please enable SETUP_MODE to register.');
+                resetPasskeyButton();
+                return;
+            }
+
             const publicKeyCredentialRequestOptions = {
-                challenge: new Uint8Array(32),
+                challenge: crypto.getRandomValues(new Uint8Array(32)),
                 allowCredentials: [{
-                    id: Uint8Array.from(atob(credentialId), c => c.charCodeAt(0)),
+                    id: base64UrlToArrayBuffer(adminCredentialIdString),
                     type: 'public-key',
+                    // transports: ['internal'], // Optional: specify transports
                 }],
                 timeout: 60000,
+                userVerification: "required"
             };
-
-            // Fill challenge with random values
-            window.crypto.getRandomValues(publicKeyCredentialRequestOptions.challenge);
 
             const credential = await navigator.credentials.get({
                 publicKey: publicKeyCredentialRequestOptions
@@ -260,45 +338,27 @@
 
         // Common authentication handler
         function authenticateUser(method, userData) {
-            // Set authentication flag
             localStorage.setItem('adminAuthenticated', 'true');
             localStorage.setItem('adminLoginTime', Date.now().toString());
-            localStorage.setItem('adminAuthMethod', 'passkey'); // Always passkey now
-            localStorage.setItem('adminUserData', JSON.stringify(userData));
-            
-            // Show success message briefly before redirect
-            showSuccess(`Signed in successfully with Passkey!`);
-            
-            setTimeout(() => {
-                window.location.href = 'admin.html';
-            }, 1500);
-        }
+            localStorage.setItem('adminAuthMethod', 'passkey'); // Method is always passkey now
+            // No longer storing generic 'adminUserData', specific passkey ID is the key
+            // localStorage.removeItem('adminUserData'); // Ensure old data is gone
 
-        // Utility functions
-        function showError(message) {
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-        }
-
-        function showSuccess(message) {
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = message;
-            errorMessage.style.background = '#dcfce7';
-            errorMessage.style.color = '#166534';
-            errorMessage.style.borderColor = '#bbf7d0';
-            errorMessage.style.display = 'block';
+            window.location.href = 'admin.html';
         }
 
         function resetPasskeyButton() {
             const passkeyBtn = document.getElementById('passkey-btn');
             passkeyBtn.disabled = false;
-            passkeyBtn.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 10V8C6 5.79 7.79 4 10 4H14C16.21 4 18 5.79 18 8V10H19C20.1 10 21 10.9 21 12V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V12C3 10.9 3.9 10 5 10H6ZM8 8V10H16V8C16 6.9 15.1 6 14 6H10C8.9 6 8 6.9 8 8Z"/>
-                </svg>
-                Sign in with Passkey
-            `;
+            // Re-initialize to reflect current state (registered or needs registration)
+            initializePasskey(); 
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
         }
 
         // Clear any existing sessions on page load

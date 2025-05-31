@@ -19,8 +19,8 @@ class BlogAdmin {
     // Update session information display
     updateSessionInfo() {
         const loginTime = localStorage.getItem('adminLoginTime');
-        const authMethod = localStorage.getItem('adminAuthMethod');
-        const userData = localStorage.getItem('adminUserData');
+        // const authMethod = localStorage.getItem('adminAuthMethod'); // No longer needed, always passkey
+        // const userData = localStorage.getItem('adminUserData'); // No longer needed for display here
         const sessionInfo = document.getElementById('session-info');
         
         if (loginTime) {
@@ -35,16 +35,8 @@ class BlogAdmin {
                 timeText = `${minutesAgo}m ago`;
             }
             
-            // Add authentication method info
-            let authText = '';
-            if (authMethod === 'gmail' && userData) {
-                const user = JSON.parse(userData);
-                authText = ` via Gmail (${user.email})`;
-            } else if (authMethod === 'passkey') {
-                authText = ' via Passkey';
-            } else {
-                authText = ' via Password';
-            }
+            // Auth method is always Passkey now
+            const authText = ' via Passkey';
             
             sessionInfo.textContent = `Session: ${timeText}${authText}`;
         } else {
@@ -700,9 +692,9 @@ document.addEventListener('DOMContentLoaded', () => {
     admin = new BlogAdmin();
     
     // Update session info every minute
-    setInterval(() => {
-        admin.updateSessionInfo();
-    }, 60000);
+    // setInterval(() => {
+    //     admin.updateSessionInfo(); // This might be too frequent or not needed if info doesn't change often
+    // }, 60000);
 });
 
 // Logout function
@@ -712,18 +704,17 @@ function logout() {
         localStorage.removeItem('adminAuthenticated');
         localStorage.removeItem('adminLoginTime');
         localStorage.removeItem('adminAuthMethod');
-        localStorage.removeItem('adminUserData');
+        // localStorage.removeItem('adminUserData'); // Already removed in login logic
         
-        // Clear passkey data if user wants to
-        const authMethod = localStorage.getItem('adminAuthMethod');
-        if (authMethod === 'passkey') {
-            const clearPasskey = confirm('Do you also want to remove your passkey registration?');
-            if (clearPasskey) {
-                localStorage.removeItem('passkeyCredentialId');
-                localStorage.removeItem('passkeyRegistered');
-            }
-        }
+        // IMPORTANT: Do NOT remove the ADMIN_PASSKEY_ID_KEY on logout.
+        // This key identifies the *registered* admin passkey. Removing it would 
+        // require the admin to re-register their passkey every time they log out and log back in,
+        // which is not the desired behavior. It should only be cleared during a SETUP_MODE re-registration.
+        // localStorage.removeItem('definedAdminPasskeyCredentialId'); 
         
+        // Remove the old key if it somehow still exists
+        localStorage.removeItem('adminPasskeyCredentialId'); 
+
         window.location.href = 'login.html';
     }
 }
